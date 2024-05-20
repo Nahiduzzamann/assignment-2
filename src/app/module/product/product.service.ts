@@ -9,13 +9,30 @@ const getAllProductsIntoDB = async () => {
   const res = await ProductModel.find();
   return res;
 };
-const getSingleProductIntoDB = async (_id:string) => {
-  const res = await ProductModel.find({_id});
+const getSingleProductIntoDB = async (_id: string) => {
+  const res = await ProductModel.find({ _id });
   return res;
+};
+const updateProductIntoDB = async (_id: string, updateData: any) => {
+  // Find the product
+  const product = await ProductModel.findById(_id);
+
+  if (!product) {
+    throw new Error("Product not found");
+  }
+
+  // Update product fields with new data
+  Object.assign(product, updateData);
+
+  // Save the updated product
+  await product.save();
+
+  return product;
 };
 
 export const ProductServices = {
-    createProductIntoDB,
-    getAllProductsIntoDB,
-    getSingleProductIntoDB
+  createProductIntoDB,
+  getAllProductsIntoDB,
+  getSingleProductIntoDB,
+  updateProductIntoDB
 };
