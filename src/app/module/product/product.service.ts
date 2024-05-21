@@ -10,7 +10,7 @@ const getAllProductsIntoDB = async () => {
   return res;
 };
 const getSingleProductIntoDB = async (_id: string) => {
-  const res = await ProductModel.find({ _id });
+  const res = await ProductModel.findOne({ _id });
   return res;
 };
 const updateProductIntoDB = async (_id: string, updateData: any) => {

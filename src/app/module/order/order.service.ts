@@ -10,7 +10,7 @@ const getAllOrdersIntoDB = async () => {
   return res;
 };
 const searchOrdersFromDB = async (email: string) => {
-  const results = await OrderModel.find({ email: email });
+  const results = await OrderModel.findOne({ email: email });
   return results;
 };
 export const OrderServices = {
