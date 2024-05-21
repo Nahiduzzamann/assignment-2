@@ -14,14 +14,19 @@ const inventoryValidationSchema = z.object({
 
 // Define Zod schema for product
 const productValidationSchema = z.object({
+  id: z.string().nonempty(),
   name: z
     .string()
     .nonempty()
-    .min(2, { message: "Name must be at least 2 characters long" }).max(100,{ message: "Name must be contain with in 100 characters" }),
+    .min(2, { message: "Name must be at least 2 characters long" })
+    .max(100, { message: "Name must be contain with in 100 characters" }),
   description: z
     .string()
     .nonempty()
-    .min(10, { message: "Description must be at least 10 characters long" }).max(2000,{ message: "Description must be contain with in 2000 characters" }),
+    .min(10, { message: "Description must be at least 10 characters long" })
+    .max(2000, {
+      message: "Description must be contain with in 2000 characters",
+    }),
   price: z.number().positive({ message: "Price must be a positive number" }),
   category: z.string().nonempty(),
   tags: z.array(z.string()),

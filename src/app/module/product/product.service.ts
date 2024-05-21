@@ -2,20 +2,30 @@ import { TProduct } from "./product.interface";
 import { ProductModel } from "./product.model";
 
 const createProductIntoDB = async (productData: TProduct) => {
-  const res = await ProductModel.create(productData);
-  return res;
+  try {
+    // try to create a new product
+    const newProduct = await ProductModel.create(productData);
+    return newProduct;
+  } catch (error: any) {
+    // Check if the error is a MongoDB duplicate key error
+    if (error.code === 11000) {
+      throw new Error("Product with this ID already exists");
+    }
+    // Throw any other errors
+    throw new Error(`Failed to create product: ${error.message}`);
+  }
 };
 const getAllProductsIntoDB = async () => {
   const res = await ProductModel.find();
   return res;
 };
-const getSingleProductIntoDB = async (_id: string) => {
-  const res = await ProductModel.findOne({ _id });
+const getSingleProductIntoDB = async (id: string) => {
+  const res = await ProductModel.findOne({ id });
   return res;
 };
-const updateProductIntoDB = async (_id: string, updateData: any) => {
+const updateProductIntoDB = async (id: string, updateData: any) => {
   // Find the product
-  const product = await ProductModel.findById(_id);
+  const product = await ProductModel.findById(id);
 
   if (!product) {
     throw new Error("Product not found");
@@ -29,8 +39,8 @@ const updateProductIntoDB = async (_id: string, updateData: any) => {
 
   return product;
 };
-const deleteProductFromDB = async (_id: string) => {
-  const result = await ProductModel.findByIdAndDelete(_id);
+const deleteProductFromDB = async (id: string) => {
+  const result = await ProductModel.findByIdAndDelete(id);
 
   if (!result) {
     throw new Error("Product not found");

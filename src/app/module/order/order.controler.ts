@@ -2,13 +2,15 @@ import { Request, Response } from "express";
 import { OrderServices } from "./order.service";
 import { ProductModel } from "../product/product.model";
 import { TOrder } from "./order.interface";
+import { OrderZodSchema } from "./order.zod.validation";
 
 const createOrder = async (req: Request, res: Response) => {
   try {
     const orderData: TOrder = req.body;
+    const zodValidatedData = OrderZodSchema.parse(orderData);
 
     // Retrieve the product from the database based on productId
-    const product = await ProductModel.findById(orderData.productId);
+    const product = await ProductModel.findById(zodValidatedData.productId);
     if (!product) {
       return res.status(404).json({
         success: false,
@@ -16,20 +18,20 @@ const createOrder = async (req: Request, res: Response) => {
       });
     }
     // Check if the ordered quantity exceeds the available quantity in inventory
-    if (orderData.quantity > product.inventory.quantity) {
+    if (zodValidatedData.quantity > product.inventory.quantity) {
       return res.status(400).json({
         success: false,
         message: "Insufficient quantity available in inventory",
       });
     }
     // Update inventory quantity and inStock status based on ordered quantity
-    product.inventory.quantity -= orderData.quantity;
+    product.inventory.quantity -= zodValidatedData.quantity;
     product.inventory.inStock = product.inventory.quantity > 0;
 
     // Save the changes to the product model
     await product.save();
 
-    const result = await OrderServices.createOrderIntoDB(orderData);
+    const result = await OrderServices.createOrderIntoDB(zodValidatedData);
 
     // Send response
     res.status(201).json({
