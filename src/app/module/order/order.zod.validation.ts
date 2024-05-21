@@ -1,5 +1,4 @@
 import { z } from "zod";
-import { TOrder } from "./order.interface";
 
 const orderSchema = z.object({
   email: z

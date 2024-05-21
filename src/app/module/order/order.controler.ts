@@ -10,7 +10,9 @@ const createOrder = async (req: Request, res: Response) => {
     const zodValidatedData = OrderZodSchema.parse(orderData);
 
     // Retrieve the product from the database based on productId
-    const product = await ProductModel.findById(zodValidatedData.productId);
+    const product = await ProductModel.findOne({
+      id: zodValidatedData.productId,
+    });
     if (!product) {
       return res.status(404).json({
         success: false,
