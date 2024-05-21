@@ -12,14 +12,14 @@ const createOrder = async (req: Request, res: Response) => {
     if (!product) {
       return res.status(404).json({
         success: false,
-        message: "Product not found",
+        message: "Order not found",
       });
     }
     // Check if the ordered quantity exceeds the available quantity in inventory
     if (orderData.quantity > product.inventory.quantity) {
       return res.status(400).json({
         success: false,
-        message: "Insufficient stock",
+        message: "Insufficient quantity available in inventory",
       });
     }
     // Update inventory quantity and inStock status based on ordered quantity

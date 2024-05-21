@@ -11,11 +11,12 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ProductControllers = void 0;
 const product_service_1 = require("./product.service");
+const product_zod_validation_1 = require("./product.zod.validation");
 const createProduct = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const productData = req.body;
-        // console.log(productData);
-        const result = yield product_service_1.ProductServices.createProductIntoDB(productData);
+        const zodValidatedData = product_zod_validation_1.ProductZodSchema.parse(productData);
+        const result = yield product_service_1.ProductServices.createProductIntoDB(zodValidatedData);
         // Send response
         res.status(201).json({
             success: true,
@@ -26,7 +27,7 @@ const createProduct = (req, res) => __awaiter(void 0, void 0, void 0, function* 
     catch (error) {
         res.status(500).json({
             success: false,
-            message: "Something went wrong",
+            message: error.message || "Something went wrong",
             error: error,
         });
     }
