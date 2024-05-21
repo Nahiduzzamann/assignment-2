@@ -5,12 +5,16 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const cors_1 = __importDefault(require("cors"));
+const product_route_1 = require("./app/module/product/product.route");
+const order_route_1 = require("./app/module/order/order.route");
 const app = (0, express_1.default)();
 // parser 
 app.use(express_1.default.json());
 app.use((0, cors_1.default)());
 // application routes
-// app.use('/api/v1/students',StudentRoutes)
+app.use('/api/products', product_route_1.ProductRoutes);
+app.use('/api/orders', order_route_1.OrderRoutes);
+//home route to check connectivity
 app.get("/", (req, res) => {
     res.send("Hello World!");
 });
