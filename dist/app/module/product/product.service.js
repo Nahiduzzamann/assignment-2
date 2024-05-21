@@ -12,20 +12,31 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.ProductServices = void 0;
 const product_model_1 = require("./product.model");
 const createProductIntoDB = (productData) => __awaiter(void 0, void 0, void 0, function* () {
-    const res = yield product_model_1.ProductModel.create(productData);
-    return res;
+    try {
+        // try to create a new product
+        const newProduct = yield product_model_1.ProductModel.create(productData);
+        return newProduct;
+    }
+    catch (error) {
+        // Check if the error is a MongoDB duplicate key error
+        if (error.code === 11000) {
+            throw new Error("Product with this ID already exists");
+        }
+        // Throw any other errors
+        throw new Error(`Failed to create product: ${error.message}`);
+    }
 });
 const getAllProductsIntoDB = () => __awaiter(void 0, void 0, void 0, function* () {
     const res = yield product_model_1.ProductModel.find();
     return res;
 });
-const getSingleProductIntoDB = (_id) => __awaiter(void 0, void 0, void 0, function* () {
-    const res = yield product_model_1.ProductModel.findOne({ _id });
+const getSingleProductIntoDB = (id) => __awaiter(void 0, void 0, void 0, function* () {
+    const res = yield product_model_1.ProductModel.findOne({ id });
     return res;
 });
-const updateProductIntoDB = (_id, updateData) => __awaiter(void 0, void 0, void 0, function* () {
+const updateProductIntoDB = (id, updateData) => __awaiter(void 0, void 0, void 0, function* () {
     // Find the product
-    const product = yield product_model_1.ProductModel.findById(_id);
+    const product = yield product_model_1.ProductModel.findById(id);
     if (!product) {
         throw new Error("Product not found");
     }
@@ -35,8 +46,8 @@ const updateProductIntoDB = (_id, updateData) => __awaiter(void 0, void 0, void 
     yield product.save();
     return product;
 });
-const deleteProductFromDB = (_id) => __awaiter(void 0, void 0, void 0, function* () {
-    const result = yield product_model_1.ProductModel.findByIdAndDelete(_id);
+const deleteProductFromDB = (id) => __awaiter(void 0, void 0, void 0, function* () {
+    const result = yield product_model_1.ProductModel.findOneAndDelete({ id: id });
     if (!result) {
         throw new Error("Product not found");
     }

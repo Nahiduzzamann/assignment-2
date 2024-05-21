@@ -20,7 +20,7 @@ const getAllOrdersIntoDB = () => __awaiter(void 0, void 0, void 0, function* () 
     return res;
 });
 const searchOrdersFromDB = (email) => __awaiter(void 0, void 0, void 0, function* () {
-    const results = yield order_model_1.OrderModel.findOne({ email: email });
+    const results = yield order_model_1.OrderModel.find({ email: email });
     return results;
 });
 exports.OrderServices = {

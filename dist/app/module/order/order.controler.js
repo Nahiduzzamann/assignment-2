@@ -12,11 +12,15 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.OrderControllers = void 0;
 const order_service_1 = require("./order.service");
 const product_model_1 = require("../product/product.model");
+const order_zod_validation_1 = require("./order.zod.validation");
 const createOrder = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const orderData = req.body;
+        const zodValidatedData = order_zod_validation_1.OrderZodSchema.parse(orderData);
         // Retrieve the product from the database based on productId
-        const product = yield product_model_1.ProductModel.findById(orderData.productId);
+        const product = yield product_model_1.ProductModel.findOne({
+            id: zodValidatedData.productId,
+        });
         if (!product) {
             return res.status(404).json({
                 success: false,
@@ -24,18 +28,18 @@ const createOrder = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
             });
         }
         // Check if the ordered quantity exceeds the available quantity in inventory
-        if (orderData.quantity > product.inventory.quantity) {
+        if (zodValidatedData.quantity > product.inventory.quantity) {
             return res.status(400).json({
                 success: false,
                 message: "Insufficient quantity available in inventory",
             });
         }
         // Update inventory quantity and inStock status based on ordered quantity
-        product.inventory.quantity -= orderData.quantity;
+        product.inventory.quantity -= zodValidatedData.quantity;
         product.inventory.inStock = product.inventory.quantity > 0;
         // Save the changes to the product model
         yield product.save();
-        const result = yield order_service_1.OrderServices.createOrderIntoDB(orderData);
+        const result = yield order_service_1.OrderServices.createOrderIntoDB(zodValidatedData);
         // Send response
         res.status(201).json({
             success: true,

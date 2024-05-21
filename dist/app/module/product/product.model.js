@@ -14,6 +14,7 @@ const inventorySchema = new mongoose_1.Schema({
 });
 //Product schema
 const productSchema = new mongoose_1.Schema({
+    id: { type: String, required: true, unique: true },
     name: { type: String, required: true },
     description: { type: String, required: true },
     price: { type: Number, required: true },
@@ -22,5 +23,6 @@ const productSchema = new mongoose_1.Schema({
     variants: { type: [variantSchema], required: true },
     inventory: { type: inventorySchema, required: true },
 });
+productSchema.index({ id: 1 }, { unique: true });
 // Create the Product model
 exports.ProductModel = (0, mongoose_1.model)("Product", productSchema);

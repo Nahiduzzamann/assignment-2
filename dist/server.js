@@ -15,12 +15,14 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const app_1 = __importDefault(require("./app"));
 const config_1 = __importDefault(require("./app/config"));
 const mongoose_1 = __importDefault(require("mongoose"));
+const product_model_1 = require("./app/module/product/product.model");
 function main() {
     return __awaiter(this, void 0, void 0, function* () {
         // console.log(config.database_url);
         //connect database by using mongoose
         try {
             yield mongoose_1.default.connect(config_1.default.database_url);
+            yield product_model_1.ProductModel.syncIndexes(); //for make id field unique
             app_1.default.listen(config_1.default.port, () => {
                 console.log(`Shop app listening on port ${config_1.default.port}`);
             });
